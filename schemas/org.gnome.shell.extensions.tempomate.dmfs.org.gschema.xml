@@ -91,5 +91,10 @@
             <summary>Most recent work-log</summary>
             <description>The last work-log sent to Jira</description>
         </key>
+        <key name="workdays" type="as">
+            <default>['mon', 'tue', 'wed', 'thu', 'fri']</default>
+            <summary>Workdays</summary>
+            <description>List of days considered as working days. Use: mon, tue, wed, thu, fri, sat, sun.</description>
+        </key>
     </schema>
 </schemalist>

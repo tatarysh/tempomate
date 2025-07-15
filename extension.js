@@ -41,7 +41,7 @@ const Indicator = GObject.registerClass(
 
             this.label = new St.Label({
                 style_class: 'panel-button',
-                text: '⚠️ Not working on an issue ⚠️',
+                text: '○',
                 y_align: Clutter.ActorAlign.CENTER
             });
             this.add_child(this.label);
@@ -223,9 +223,19 @@ const Indicator = GObject.registerClass(
                 const issue = this.issue_of(current_work);
                 const remaining_duration = between(new Date(), current_work.end());
                 this.label.set_text(`${issue.key} (${remaining_duration.toMinutes()}m remaining)`);
+                this.label.set_style_class_name('panel-button');
                 this._notification_state_machine.start_work(issue, `${remaining_duration.toMinutes()} minutes remaining`);
             } else {
-                this.label.set_text("⚠️ Not working on an issue ⚠️");
+                // Pobierz dni robocze z ustawień
+                const workdays = new Set(this.settings.get_strv('workdays'));
+                const today = ['sun','mon','tue','wed','thu','fri','sat'][new Date().getDay()];
+                if (workdays.has(today)) {
+                    this.label.set_text('● idle');
+                    this.label.set_style_class_name('panel-button workday-red');
+                } else {
+                    this.label.set_text('○ off');
+                    this.label.set_style_class_name('panel-button weekend-gray');
+                }
             }
         }
 
