@@ -33,6 +33,7 @@ import { NotificationStateMachine } from './ui/notification_state_machine.js';
 import { between, Duration } from './date/duration.js';
 import { debug } from './utils/log.js';
 import { destroy as destroy_timers, managedTimer, interval } from './utils/utils.js';
+import { hhmmTimeString } from './date/date.js';
 
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
@@ -104,6 +105,7 @@ const Indicator = GObject.registerClass(
                         tooltip: "Snooze for 15 more minutes",
                         callback: () => {
                             this._notification_state_machine.add_snooze();
+                            this.update_label();
                             this.menu.close(true);
                         }
                     }
@@ -219,26 +221,35 @@ const Indicator = GObject.registerClass(
 
         update_label() {
             const current_work = this._work_journal?.current_work();
-            const today = new Date();
-            const workedDuration = this._work_journal?.getWorkedDurationForDate?.(today);
-            const workedStr = workedDuration ? `${Math.floor(workedDuration.toMinutes() / 60)}:${(workedDuration.toMinutes() % 60).toString().padStart(2, '0')}` : '0:00';
+            const snoozed_until = this._notification_state_machine.snoozed_until?.();
+
+            if (!current_work && snoozed_until && new Date() < snoozed_until) {
+                this.label.set_text(`☕ ${hhmmTimeString(snoozed_until)}`);
+                this.label.set_style_class_name('panel-button');
+                return;
+            }
+
             if (current_work) {
                 const issue = this.issue_of(current_work);
                 const remaining_duration = between(new Date(), current_work.end());
                 this.label.set_text(`${issue.key} (${remaining_duration.toMinutes()}m remaining)`);
                 this.label.set_style_class_name('panel-button');
                 this._notification_state_machine.start_work(issue, `${remaining_duration.toMinutes()} minutes remaining`);
+                return;
+            }
+
+            const today = new Date();
+            const workdays = new Set(this.settings.get_strv('workdays'));
+            const dayKey = ['sun','mon','tue','wed','thu','fri','sat'][today.getDay()];
+            const workedDuration = this._work_journal?.getWorkedDurationForDate?.(today);
+            const workedStr = workedDuration ? `${Math.floor(workedDuration.toMinutes() / 60)}:${(workedDuration.toMinutes() % 60).toString().padStart(2, '0')}` : '0:00';
+
+            if (workdays.has(dayKey)) {
+                this.label.set_text(`● idle ${workedStr}`);
+                this.label.set_style_class_name('panel-button workday-red');
             } else {
-                // Get workdays from settings
-                const workdays = new Set(this.settings.get_strv('workdays'));
-                const dayKey = ['sun','mon','tue','wed','thu','fri','sat'][today.getDay()];
-                if (workdays.has(dayKey)) {
-                    this.label.set_text(`● idle ${workedStr}`);
-                    this.label.set_style_class_name('panel-button workday-red');
-                } else {
-                    this.label.set_text(`○ off ${workedStr}`);
-                    this.label.set_style_class_name('panel-button weekend-gray');
-                }
+                this.label.set_text(`○ off ${workedStr}`);
+                this.label.set_style_class_name('panel-button weekend-gray');
             }
         }
 
