@@ -27,6 +27,15 @@ class JiraServerClient {
         this.token = token;
     }
 
+    check_connection(success_handler, error_handler) {
+        this.rest_client.get(
+            "/rest/api/2/myself",
+            [["Authorization", `Bearer ${this.token}`]]
+        )
+        .then(success_handler)
+        .catch(error_handler);
+    }
+
     issue(issue, response_handler, error_handler) {
         this.rest_client.get(`/rest/api/2/issue/${encodeURI(issue)}?fields=id,key,summary`,
             [["Authorization", `Bearer ${this.token}`]])
@@ -53,6 +62,15 @@ class JiraCloudClient {
         this.username = username;
         this.token = token;
         this.tempo_token = tempo_token;
+    }
+
+    check_connection(success_handler, error_handler) {
+        this.rest_client.get(
+            "/rest/api/3/myself",
+            [["Authorization", `Basic ${this._base64(this.username, this.token)}`]]
+        )
+        .then(success_handler)
+        .catch(error_handler);
     }
 
     issue(issue, response_handler, error_handler) {

@@ -2,7 +2,30 @@ import GObject from 'gi://GObject';
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import { Deployment } from './deployment.js';
+import { jira_client_from_config } from '../client/jira_client.js';
+import GLib from 'gi://GLib';
 
+function createConnectionCheckRow(settings) {
+    const box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
+    const checkButton = new Gtk.Button({ label: "Check Connection" });
+    checkButton.set_margin_top(6);
+    const statusLabel = new Gtk.Label({ label: "" });
+    checkButton.connect('clicked', () => {
+        statusLabel.set_label("Checking connection...");
+        const client = jira_client_from_config(settings);
+        client.check_connection(
+            () => {
+                statusLabel.set_label("Connection successful!");
+            },
+            (err) => {
+                statusLabel.set_label("Connection failed: " + err.message);
+            }
+        );
+    });
+    box.append(checkButton);
+    box.append(statusLabel);
+    return box;
+}
 
 const deployments = [
     new Deployment("jira-server",
@@ -30,6 +53,9 @@ const deployments = [
             });
             token.connect('unmap', (widget) => settings.set_string("token", widget.text))
             server_group.add(token);
+
+            // Add connection check UI
+            server_group.add(createConnectionCheckRow(settings));
 
             return server_group;
         }
@@ -67,6 +93,9 @@ const deployments = [
             });
             tempo_token.connect('unmap', (widget) => settings.set_string("tempo-cloud-token", widget.text))
             group.add(tempo_token);
+
+            // Add connection check UI
+            group.add(createConnectionCheckRow(settings));
 
             return group;
         }

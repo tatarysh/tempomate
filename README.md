@@ -11,7 +11,7 @@ Tempomate needs to be configured before you can start using it.
 ### Server Connection
 
 To use this extension, configure your server connection and access credentials. Normally, the URL base just looks like
-`https://<your-jira-hostname>` for Jira server / Data Center and https://<your-subdomain>.atlassian.net` for Jira Cloud.
+`https://<your-jira-hostname>` for Jira server / Data Center and `https://<your-subdomain>.atlassian.net` for Jira Cloud.
 At present, only API token authentication
 is supported. Please generate an API token in your Jira Profile (Jira Cloud: https://id.atlassian.com/manage-profile/security/api-tokens) and paste it into the dialog.
 For Jira Cloud you need to generate a separate Tempo API Token. Note that Tempo API tokens have a maximum validity of 365 days and need to be replaced on a regular base.
@@ -39,6 +39,18 @@ Tempomate can remind you frequently to log your time if there is no current work
 
 ![nag notifications](https://github.com/dmfs/tempomate/blob/main/screenshots/nag-notifications.png?raw=true)
 
+## Testing and Development
+
+To test or develop Tempomate, you may want to run GNOME Shell in a nested Wayland session. This allows you to safely test GNOME Shell extensions in an isolated environment.
+
+Run the following command:
+
+```bash
+dbus-run-session -- gnome-shell --nested --wayland
+```
+
+This will start a new GNOME Shell instance in a window, using Wayland. You can then install and test the extension without affecting your main session.
+
 ## Using Tempomate
 
 After configuring Tempomate, you can open the menu in the top right corner and click on the issue you're working on.
@@ -58,7 +70,7 @@ When no worklog is active and the nag notification is enabled, a notification wi
 
 ![nag-notification](https://github.com/dmfs/tempomate/blob/main/screenshots/nag-notification.png?raw=true)
 
-## DBus interface
+## DBus Interface
 
 You can start or extend a work-log by calling an interface via DBus like:
 
@@ -68,10 +80,10 @@ gdbus call --session --dest org.gnome.Shell --object-path /org/dmfs/gnome/shell/
 
 With `ISSUE` being the issue ID of the ticket you're working on.
 
-### Example
+### Example: Git Post-checkout Hook
 
 You can use this interface to create a work-log whenever you check out a branch that contains a Jira issue ID by
-creating a post-checkout hook with the following content
+creating a post-checkout hook with the following content:
 
 ```bash
 #!/bin/bash
