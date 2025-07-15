@@ -219,6 +219,9 @@ const Indicator = GObject.registerClass(
 
         update_label() {
             const current_work = this._work_journal?.current_work();
+            const today = new Date();
+            const workedDuration = this._work_journal?.getWorkedDurationForDate?.(today);
+            const workedStr = workedDuration ? `${Math.floor(workedDuration.toMinutes() / 60)}:${(workedDuration.toMinutes() % 60).toString().padStart(2, '0')}` : '0:00';
             if (current_work) {
                 const issue = this.issue_of(current_work);
                 const remaining_duration = between(new Date(), current_work.end());
@@ -228,12 +231,12 @@ const Indicator = GObject.registerClass(
             } else {
                 // Pobierz dni robocze z ustawień
                 const workdays = new Set(this.settings.get_strv('workdays'));
-                const today = ['sun','mon','tue','wed','thu','fri','sat'][new Date().getDay()];
-                if (workdays.has(today)) {
-                    this.label.set_text('● idle');
+                const dayKey = ['sun','mon','tue','wed','thu','fri','sat'][today.getDay()];
+                if (workdays.has(dayKey)) {
+                    this.label.set_text(`● idle ${workedStr}`);
                     this.label.set_style_class_name('panel-button workday-red');
                 } else {
-                    this.label.set_text('○ off');
+                    this.label.set_text(`○ off ${workedStr}`);
                     this.label.set_style_class_name('panel-button weekend-gray');
                 }
             }

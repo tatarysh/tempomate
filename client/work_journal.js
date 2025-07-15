@@ -117,6 +117,24 @@ class WorkJournal {
         }
     }
 
+    getWorkedDurationForDate(date) {
+        // Zwraca sumę czasu pracy dla danego dnia (tylko lokalnie znane worklogi)
+        // date: Date (tylko część roku/miesiąca/dnia się liczy)
+        let total = Duration.ofSeconds(0);
+        const isSameDay = (d1, d2) =>
+            d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate();
+        const addIfSameDay = worklog => {
+            if (worklog && isSameDay(worklog.start(), date)) {
+                total = total.add(worklog.duration());
+            }
+        };
+        addIfSameDay(this._current_work);
+        addIfSameDay(this._previous_work);
+        return total;
+    }
+
     destroy() {
         // see https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/2621
         // this isn't called when the user logs out
