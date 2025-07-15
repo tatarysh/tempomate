@@ -118,8 +118,8 @@ class WorkJournal {
     }
 
     getWorkedDurationForDate(date) {
-        // Zwraca sumę czasu pracy dla danego dnia (tylko lokalnie znane worklogi)
-        // date: Date (tylko część roku/miesiąca/dnia się liczy)
+        // Returns the sum of work time for a given day (only locally known worklogs)
+        // date: Date (only year/month/day part counts)
         let total = Duration.ofSeconds(0);
         const isSameDay = (d1, d2) =>
             d1.getFullYear() === d2.getFullYear() &&

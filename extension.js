@@ -229,7 +229,7 @@ const Indicator = GObject.registerClass(
                 this.label.set_style_class_name('panel-button');
                 this._notification_state_machine.start_work(issue, `${remaining_duration.toMinutes()} minutes remaining`);
             } else {
-                // Pobierz dni robocze z ustawień
+                // Get workdays from settings
                 const workdays = new Set(this.settings.get_strv('workdays'));
                 const dayKey = ['sun','mon','tue','wed','thu','fri','sat'][today.getDay()];
                 if (workdays.has(dayKey)) {

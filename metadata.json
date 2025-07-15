@@ -1,14 +1,11 @@
 {
   "name": "Tempomate",
   "description": "Effortless time tracking in Jira Tempo timesheets!\n\nWith this extension, logging your time in Tempo takes three clicks or less—quick, simple, and hassle-free. Plus, if you forget, it sends friendly reminders to keep you on track. Just set it up with your Jira URL, username, API token, and a few JQL filters for the issue categories you want to see in the menu. Say goodbye to tedious time tracking and hello to streamlined productivity!",
-  "uuid": "tempomate@dmfs.org",
+  "uuid": "tempomate@rysh.pl",
   "shell-version": [
     "46", "47"
   ],
   "version-name": "0.8.1",
-  "donations": {
-    "paypal": "dmfs"
-  },
-  "url": "https://github.com/dmfs/tempomate",
-  "settings-schema": "org.gnome.shell.extensions.tempomate.dmfs.org"
+  "url": "https://github.com/rysh/tempomate",
+  "settings-schema": "org.gnome.shell.extensions.tempomate.rysh.pl"
 }

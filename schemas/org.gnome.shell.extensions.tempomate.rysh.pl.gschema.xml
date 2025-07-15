@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema id="org.gnome.shell.extensions.tempomate.dmfs.org"
-        path="/org/gnome/shell/extensions/tempomate.dmfs.org/">
+    <schema id="org.gnome.shell.extensions.tempomate.rysh.pl"
+        path="/org/gnome/shell/extensions/tempomate.rysh.pl/">
         <key name="host" type="s">
             <default>"https://jira.example.com"</default>
             <summary>Jira base URL</summary>
