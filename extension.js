@@ -53,6 +53,19 @@ const Indicator = GObject.registerClass(
             this._settingsChangedId = this.settings.connect('changed', this._settingsChanged.bind(this));
             this._settingsChanged();
 
+            // Sprawdzenie połączenia do Jira
+            this._jira_connection_ok = true;
+            this.client.check_connection?.(
+                () => {
+                    this._jira_connection_ok = true;
+                    this.update_label();
+                },
+                () => {
+                    this._jira_connection_ok = false;
+                    this.update_label();
+                }
+            );
+
             this.menu.connect("open-state-changed", this.updateUI.bind(this))
             this.dbus_service = new TempomateService(this.fetch_and_start_or_continue_work.bind(this));
 
@@ -220,6 +233,12 @@ const Indicator = GObject.registerClass(
         }
 
         update_label() {
+            if (this._jira_connection_ok === false) {
+                this.label.set_text('🛠️ Check connection');
+                this.label.set_style_class_name('panel-button');
+                return;
+            }
+
             const current_work = this._work_journal?.current_work();
             const snoozed_until = this._notification_state_machine.snoozed_until?.();
 
